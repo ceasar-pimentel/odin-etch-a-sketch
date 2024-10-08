@@ -21,7 +21,8 @@ let main = null;
 
 
 // fields;
-let bodyWidth = null;
+// let bodyWidth = null;
+let baseWidth = null;
 
 //#region page layout and styling 
 
@@ -59,13 +60,20 @@ function buildHeader() {
 }
 
 function buildEtchASketch() {
+    main.id = "main";
+    main.style.textAlign = "center";
+    main.style.margin = "8px";
     etchDiv.id = "etch-div";
-    etchDiv.style.display = "flex";
+    etchDiv.style.display = "inline-flex";
     etchDiv.style.flexWrap = "wrap";
     etchDiv.style.justifyContent = "center";
     etchDiv.style.alignItems = "center";
     etchDiv.style.gap = "0px";
-}  
+    etchDiv.style.width = "50%";
+    etchDiv.style.aspectRatio = "1/1";
+    etchDiv.style.margin = "auto";
+    etchDiv.style.borderStyle = "solid";
+}
 
 function buildLayout() {
     buildBody();
@@ -75,16 +83,14 @@ function buildLayout() {
     main.appendChild(etchDiv);
     container.appendChild(header);
     container.appendChild(main);
-
-    bodyWidth = window.innerWidth;
 }
 
 //#endregion
 
 //#region game logic
 
-function calculateSquareSize(numOfSquares) {
-    let squareWidth = Math.floor((bodyWidth * .50)/ numOfSquares);
+function calculateSquareSize(numOfSquares, etchDivWidth) {
+    let squareWidth = Math.floor((etchDivWidth) / numOfSquares);
     return squareWidth;
 }
 
@@ -93,9 +99,8 @@ function removeAllPixels() {
     children.forEach((child) => {
         etchDiv.removeChild(child);
     });
-    body.setAttribute("style", "padding: 16px 25%;");
 }
-
+/* 
 function recalculateBodyPadding(squareSize,  numOfSquares) {
     // updating the window width in case it might have changed
     bodyWidth = body.getBoundingClientRect().width;
@@ -105,11 +110,16 @@ function recalculateBodyPadding(squareSize,  numOfSquares) {
     console.log(`squareSize: ${squareSize} windowWidth: ${bodyWidth} calculatedWith: ${calculatedWidth} new calc padding: ${newCalcPadding}`);
     return newCalcPadding;
 }
+*/
 
 function constructBoard() {
 
     let num = Number(input.value);
-    
+
+    if(baseWidth == null) {
+        baseWidth = etchDiv.getBoundingClientRect().width;
+    }
+
     // removing and clearing the board in case there was prior drawing.
     removeAllPixels();
 
@@ -117,18 +127,22 @@ function constructBoard() {
         return;
     }
 
-    let squareSize = calculateSquareSize(num);
-    let squares = num * num;
 
-    let newPadding = recalculateBodyPadding(squareSize, num);
-    body.style.padding = `16px ${newPadding}px`;
+    let squareSize = calculateSquareSize(num, baseWidth);
+    let squares = num * num;
+    let newEtchDivWidth = (squareSize * num);
+
+    etchDiv.style.width = `${newEtchDivWidth}px`;
+
+    //let newPadding = recalculateBodyPadding(squareSize, num);
+    //body.style.padding = `16px ${newPadding}px`;
 
     for (let i = 0; i < squares; i++) {
         let pixel = document.createElement("div");
         pixel.style.flexBasis = `${squareSize}px`;
         pixel.style.aspectRatio = "1/1";
-        pixel.onmouseenter = (event) => { 
-            event.target.style.backgroundColor ="black"; 
+        pixel.onmouseenter = (event) => {
+            event.target.style.backgroundColor = "black";
         };
         etchDiv.appendChild(pixel);
     }
@@ -137,7 +151,6 @@ function constructBoard() {
 //#endregion
 
 function initializePage() {
-    container = document.querySelector("#container");
     initializeDomObjects();
     buildLayout();
 }
