@@ -65,8 +65,6 @@ function buildEtchASketch() {
     etchDiv.style.justifyContent = "center";
     etchDiv.style.alignItems = "center";
     etchDiv.style.gap = "0px";
-    etchDiv.style.borderStyle ="solid";
-
 }  
 
 function buildLayout() {
